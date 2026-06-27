@@ -22,7 +22,7 @@ void Chunk::chunk_arrived_next_device(void* const chunk_ptr) noexcept {
     if (chunk->arrived_dest()) {
         // chunk arrived dest, invoke callback
         // as chunk is unique_ptr, will be destroyed automatically
-        chunk->invoke_callback();
+        chunk->invoke_callback(chunk_ptr);
     } else {
         // send this chunk to next dest
         const auto current_node = chunk->current_device();
@@ -30,9 +30,10 @@ void Chunk::chunk_arrived_next_device(void* const chunk_ptr) noexcept {
     }
 }
 
-Chunk::Chunk(const ChunkSize chunk_size, Route route, const Callback callback, const CallbackArg callback_arg) noexcept
+Chunk::Chunk(const ChunkSize chunk_size, Route route, int req_id, const FinalCallback callback, const CallbackArg callback_arg) noexcept
     : chunk_size(chunk_size),
       route(std::move(route)),
+      req_id(req_id),
       callback(callback),
       callback_arg(callback_arg) {
     assert(chunk_size > 0);
@@ -80,7 +81,12 @@ ChunkSize Chunk::get_size() const noexcept {
     return chunk_size;
 }
 
-void Chunk::invoke_callback() noexcept {
+int Chunk::get_req_id() const noexcept { 
+    return req_id; 
+
+}
+
+void Chunk::invoke_callback(void* const chunk_ptr) noexcept {
     // invoke callback
-    (*callback)(callback_arg);
+    (*callback)(callback_arg, chunk_ptr);
 }

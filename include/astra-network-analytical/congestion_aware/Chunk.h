@@ -33,10 +33,11 @@ class Chunk {
      *
      * @param chunk_size: size of the chunk
      * @param route: route of the chunk from its source to destination
+     * @param req_id: Chunk id passed from outside
      * @param callback: callback to be invoked when the chunk arrives destination
      * @param callback_arg: argument of the callback
      */
-    Chunk(ChunkSize chunk_size, Route route, Callback callback, CallbackArg callback_arg) noexcept;
+    Chunk(ChunkSize chunk_size, Route route, int req_id, FinalCallback callback, CallbackArg callback_arg) noexcept;
 
     /**
      * Get the current sitting device of the chunk
@@ -52,6 +53,12 @@ class Chunk {
      */
     [[nodiscard]] std::shared_ptr<Device> next_device() const noexcept;
 
+    /**
+     * Get the request id of the chunk
+     *
+     * @return request id of the chunk
+     */
+    [[nodiscard]] int get_req_id() const noexcept;
     /**
      * Mark the chunk arrived at its next device
      * i.e., drop the current device from the route
@@ -77,20 +84,22 @@ class Chunk {
      * Invoke the registered callback
      * i.e., this method should be called when the chunk arrives its destination.
      */
-    void invoke_callback() noexcept;
+    void invoke_callback(void* chunk_ptr) noexcept;
 
   private:
     /// size of the chunk
     ChunkSize chunk_size;
-
     /// route of the chunk to its destination.
     /// Route has the structure of [current device, next device, ..., dest device]
     /// e.g., if a chunk starts from device 5, then reaches destination 3,
     /// the route would be e.g., [5, 1, 6, 2, 3]
     Route route;
 
+    // Modified to add req_id
+    int req_id;
+
     /// callback to be invoked when the chunk arrives at its destination
-    Callback callback;
+    FinalCallback callback;
 
     /// argument of the callback
     CallbackArg callback_arg;

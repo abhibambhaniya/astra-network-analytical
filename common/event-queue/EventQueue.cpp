@@ -40,6 +40,16 @@ void EventQueue::proceed() noexcept {
     event_queue.pop_front();
 }
 
+std::vector<int> EventQueue::get_and_clear_arrivals() noexcept {
+    std::vector<int> result = std::move(arrived_reqs);
+    arrived_reqs.clear();
+    return result;
+}
+
+void EventQueue::add_arrival(int req_id) noexcept {
+    arrived_reqs.push_back(req_id);
+}
+
 void EventQueue::schedule_event(const EventTime event_time,
                                 const Callback callback,
                                 const CallbackArg callback_arg) noexcept {

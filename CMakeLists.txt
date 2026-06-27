@@ -13,11 +13,17 @@ endif ()
 # Setup project
 project(Analytical)
 
+include_directories("/home/hanjiang/miniconda3/envs/GenA/bin/")
+set(PYBIND11_FINDPYTHON ON)
+find_package(pybind11 CONFIG REQUIRED)
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # Compilation target
 set(BUILDTARGET "all" CACHE STRING "Compilation target ([all]/congestion_unaware/congestion_aware)")
 
 # Can be compiled into either library or executable
-option(NETWORK_BACKEND_BUILD_AS_LIBRARY "Build as a library" OFF)
+option(NETWORK_BACKEND_BUILD_AS_LIBRARY "Build as a library" ON)
 
 # Compile external libraries
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/yaml-cpp yaml-cpp)
@@ -113,4 +119,35 @@ if (BUILDTARGET STREQUAL "all" OR BUILDTARGET STREQUAL "congestion_aware")
     target_include_directories(Analytical_Congestion_Aware PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/)
     target_include_directories(Analytical_Congestion_Aware PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/astra-network-analytical/)
     target_include_directories(Analytical_Congestion_Aware PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/extern/)
+    
+    set_target_properties(Analytical_Congestion_Aware PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    # Create Python bindings for Congestion aware Backend
+
+    # Define pybind11 module target
+    pybind11_add_module(simulation_py_congestion_aware
+        ${CMAKE_CURRENT_SOURCE_DIR}/congestion_aware/simulation_pybindings.cpp
+    )
+
+    # Link against your congestion-aware library
+    target_link_libraries(simulation_py_congestion_aware
+        PRIVATE
+            Analytical_Congestion_Aware
+            yaml-cpp
+    )
+
+    # Include your headers for pybind to see your C++ classes
+    target_include_directories(simulation_py_congestion_aware
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include/
+            ${CMAKE_CURRENT_SOURCE_DIR}/include/astra-network-analytical/
+            ${CMAKE_CURRENT_SOURCE_DIR}/extern/
+    )
+
+    # Optional: Set output directory for Python module
+    set_target_properties(simulation_py_congestion_aware PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../lib/
+    )
 endif ()
+
+
+

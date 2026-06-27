@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 
 #include "common/EventList.h"
 #include "common/Type.h"
+#include <vector>
 
 namespace NetworkAnalytical {
 
@@ -44,6 +45,20 @@ class EventQueue {
     void proceed() noexcept;
 
     /**
+      * 
+      * Add arrival requests to the event queue
+      *
+      */
+    void add_arrival(int req_id) noexcept;
+
+    /**
+      * 
+      * Process and return all arrival requests
+      *
+      */
+    std::vector<int> get_and_clear_arrivals() noexcept;
+
+    /**
      * Schedule an event with a given event time.
      *
      * @param event_time time of event
@@ -56,6 +71,7 @@ class EventQueue {
     /// current time of the event queue
     EventTime current_time;
 
+    std::vector<int> arrived_reqs;
     /// list of EventLists
     std::list<EventList> event_queue;
 };

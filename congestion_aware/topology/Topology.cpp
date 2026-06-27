@@ -67,6 +67,21 @@ void Topology::send(std::unique_ptr<Chunk> chunk) noexcept {
     devices[src]->send(std::move(chunk));
 }
 
+
+void Topology::send_python(std::shared_ptr<Chunk> chunk) noexcept {
+    assert(chunk != nullptr);
+
+    // get src npu node_id
+    const auto src = chunk->current_device()->get_id();
+
+    // assert src is valid
+    assert(0 <= src && src < devices_count);
+
+    // initiate transmission from src
+    devices[src]->send(std::make_unique<Chunk>(*chunk));
+}
+
+
 void Topology::connect(const DeviceId src,
                        const DeviceId dest,
                        const Bandwidth bandwidth,

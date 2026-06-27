@@ -54,6 +54,13 @@ class Topology {
     void send(std::unique_ptr<Chunk> chunk) noexcept;
 
     /**
+     * Initiate a transmission of a chunk.
+     *
+     * @param chunk chunk to be transmitted
+     */
+     void send_python(std::shared_ptr<Chunk> chunk) noexcept;
+
+    /**
      * Get the number of NPUs in the topology.
      * NPU excludes non-NPU devices such as switches.
      *

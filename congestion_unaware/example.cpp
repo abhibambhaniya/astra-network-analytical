@@ -10,9 +10,13 @@ LICENSE file in the root directory of this source tree.
 using namespace NetworkAnalytical;
 using namespace NetworkAnalyticalCongestionUnaware;
 
-int main() {
+int main(int argc, char* argv[]) {
+    print("Hello Astra Network Analytical!");
+    // Check for input arguments
+    const std::string config_file = (argc > 1) ? argv[1] : "../input/Ring_FullyConnected_Switch.yml";
+
     // Parse network config and create topology
-    const auto network_parser = NetworkParser("../input/Ring_FullyConnected_Switch.yml");
+    const auto network_parser = NetworkParser(config_file);
     const auto topology = construct_topology(network_parser);
 
     // message settings

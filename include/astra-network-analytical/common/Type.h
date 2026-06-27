@@ -12,6 +12,9 @@ namespace NetworkAnalytical {
 /// Callback function pointer: "void func(void*)"
 using Callback = void (*)(void*);
 
+// Final Callback for Chunk that notes id
+using FinalCallback = int(*)(void*, void*);
+
 /// Callback function argument: void*
 using CallbackArg = void*;
 
