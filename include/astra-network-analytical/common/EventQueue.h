@@ -59,6 +59,18 @@ class EventQueue {
     std::vector<int> get_and_clear_arrivals() noexcept;
 
     /**
+     * Time of the earliest pending event. Requires !finished().
+     */
+    [[nodiscard]] EventTime get_next_event_time() const noexcept;
+
+    /**
+     * Move the current time forward to `time` without processing events.
+     * `time` must not be earlier than the current time, and must be earlier
+     * than the next pending event (process events up to `time` first).
+     */
+    void advance_to(EventTime time) noexcept;
+
+    /**
      * Schedule an event with a given event time.
      *
      * @param event_time time of event

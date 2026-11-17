@@ -30,6 +30,8 @@ PYBIND11_MODULE(simulation_py_congestion_aware, m) {
         .def("get_current_time", &EventQueue::get_current_time)
         .def("get_and_clear_arrivals", &EventQueue::get_and_clear_arrivals)
         .def("finished", &EventQueue::finished)
+        .def("get_next_event_time", &EventQueue::get_next_event_time)
+        .def("advance_to", &EventQueue::advance_to, py::arg("time"))
         .def("proceed", &EventQueue::proceed);
 
     py::class_<NetworkParser>(m, "NetworkParser")

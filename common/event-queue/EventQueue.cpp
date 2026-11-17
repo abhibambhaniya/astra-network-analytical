@@ -46,6 +46,17 @@ std::vector<int> EventQueue::get_and_clear_arrivals() noexcept {
     return result;
 }
 
+EventTime EventQueue::get_next_event_time() const noexcept {
+    assert(!finished());
+    return event_queue.front().get_event_time();
+}
+
+void EventQueue::advance_to(const EventTime time) noexcept {
+    assert(time >= current_time);
+    assert(finished() || time < event_queue.front().get_event_time());
+    current_time = time;
+}
+
 void EventQueue::add_arrival(int req_id) noexcept {
     arrived_reqs.push_back(req_id);
 }
