@@ -35,7 +35,7 @@ void Device::send(std::unique_ptr<Chunk> chunk) noexcept {
     const auto next_dest_id = next_dest->get_id();
 
     // assert the next dest is connected to this node
-    assert(conneted(next_dest_id));
+    assert(connected(next_dest_id));
 
     // send the chunk to the next dest
     // delegate this task to the link

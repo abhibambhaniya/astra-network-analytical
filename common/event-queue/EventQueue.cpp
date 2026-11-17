@@ -30,7 +30,9 @@ void EventQueue::proceed() noexcept {
     auto& current_event_list = event_queue.front();
 
     // check the validity and update current time
-    assert(current_event_list.get_event_time() > current_time);
+    // (equal is valid: a serialization delay under 1 ns truncates to 0, which
+    // schedules link-free at the current time)
+    assert(current_event_list.get_event_time() >= current_time);
     current_time = current_event_list.get_event_time();
 
     // invoke events
